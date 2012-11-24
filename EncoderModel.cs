@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 
 namespace ImageTextEncoder
@@ -15,6 +16,7 @@ namespace ImageTextEncoder
         private Bitmap _image;
         private int _pixelsPerByte;
         private string _password;
+        private string _runTime;
 
         public string Text
         {
@@ -79,6 +81,18 @@ namespace ImageTextEncoder
             }
         }
 
+        public string RunTime
+        {
+            get { return _runTime; }
+            set
+            {
+                if (_runTime == value)
+                    return;
+                _runTime = value;
+                OnPropertyChanged("RunTime");
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected virtual void OnPropertyChanged(string propertyName)
@@ -89,13 +103,21 @@ namespace ImageTextEncoder
 
         public void Encode()
         {
-            TextEncoderDecoder.Encode(Image, Text, PixelsPerByte);
+            var sw = new Stopwatch();
+            sw.Start();
+            TextEncoderDecoder.FastEncode(Image, Text, PixelsPerByte);
+            sw.Stop();
+            RunTime = sw.ElapsedMilliseconds.ToString() + " ms";
             OnPropertyChanged("Image");
         }
 
         public void Decode()
         {
-            Text = TextEncoderDecoder.Decode(Image, PixelsPerByte);
+            var sw = new Stopwatch();
+            sw.Start();
+            Text = TextEncoderDecoder.FastDecode(Image, PixelsPerByte);
+            sw.Stop();
+            RunTime = sw.ElapsedMilliseconds.ToString() + " ms";
         }
 
         public void Encrypt()

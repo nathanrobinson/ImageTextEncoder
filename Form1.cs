@@ -12,6 +12,15 @@ namespace ImageTextEncoder
             InitializeComponent();
             encoderModelBindingSource.AddNew();
             encoderModelBindingSource.MoveFirst();
+            ((EncoderModel)encoderModelBindingSource.Current).PropertyChanged += Form1_PropertyChanged;
+        }
+
+        void Form1_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "RunTime")
+            {
+                toolStripStatusLabel1.Text = ((EncoderModel) encoderModelBindingSource.Current).RunTime;
+            }
         }
 
         private void OpenToolStripMenuItemClick(object sender, EventArgs e)
